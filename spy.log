@@ -1,0 +1,8 @@
+1711515500525|10|statement|connection 1|url jdbc:h2:tcp://localhost/~/jpashop|select * from INFORMATION_SCHEMA.SEQUENCES|select * from INFORMATION_SCHEMA.SEQUENCES
+1711515501346|1|statement|connection 2|url jdbc:h2:tcp://localhost/~/jpashop|     drop table if exists member cascade |     drop table if exists member cascade 
+1711515501347|0|statement|connection 2|url jdbc:h2:tcp://localhost/~/jpashop|     drop sequence if exists member_seq|     drop sequence if exists member_seq
+1711515501356|0|statement|connection 3|url jdbc:h2:tcp://localhost/~/jpashop|     create sequence member_seq start with 1 increment by 50|     create sequence member_seq start with 1 increment by 50
+1711515501361|1|statement|connection 3|url jdbc:h2:tcp://localhost/~/jpashop|     create table member (         id bigint not null,         username varchar(255),         primary key (id)     )|     create table member (         id bigint not null,         username varchar(255),         primary key (id)     )
+1711515503383|0|statement|connection 4|url jdbc:h2:tcp://localhost/~/jpashop|select next value for member_seq|select next value for member_seq
+1711515503495|0|statement|connection 4|url jdbc:h2:tcp://localhost/~/jpashop|insert into member (username,id) values (?,?)|insert into member (username,id) values ('memberA',1)
+1711515503498|0|commit|connection 4|url jdbc:h2:tcp://localhost/~/jpashop||
