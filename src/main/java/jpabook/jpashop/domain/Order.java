@@ -25,7 +25,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_id") // 1대1 연관관계 주인 order
     private Delivery delivery;
 
@@ -33,4 +33,21 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문상태 [ORDER, CANCLE]
+
+    // 연관관계 편의 메서드
+    // 양방향일 때 사용
+    public void setMember (Member member) {
+        this.member = member;
+        member.getOrders().add(this);
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+        delivery.setOrder(this);
+    }
 }
