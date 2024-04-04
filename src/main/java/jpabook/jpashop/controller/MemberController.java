@@ -1,10 +1,9 @@
-package jpabook.jpashop.controler;
+package jpabook.jpashop.controller;
 
 import jakarta.validation.Valid;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
