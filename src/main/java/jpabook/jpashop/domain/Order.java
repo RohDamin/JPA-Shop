@@ -1,5 +1,7 @@
 package jpabook.jpashop.domain;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,14 +12,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Table(name = "orders")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // createOrderItem을 통한 생성을 제외한 나머지 방법을 막음
 public class Order {
-    @Id
-    @GeneratedValue
+
+    @Id @GeneratedValue
     @Column(name = "order_id")
     private Long id;
 
@@ -25,9 +28,11 @@ public class Order {
     @JoinColumn(name = "member_id")
     private Member member; // 주문 회원
 
-    @OneToMany(mappedBy = "order")
+    @JsonIgnore
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_id") // 1대1 연관관계 주인 order
     private Delivery delivery;
@@ -84,7 +89,6 @@ public class Order {
     }
 
     //==조회 로직==//
-
     /**
      * 전체 주문 가격 조회
      */
