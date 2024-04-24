@@ -9,7 +9,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Result;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,22 +20,34 @@ public class MemberApiController {
     private final MemberService memberService;
 
     /**
-     * 조회 V1: 응답 값으로 엔티티를 직접 외부에 노출
-     * 문제점:
-     *  - 엔티티에 프레젠테이션 계층을 위한 로직이 추가됨
-     *  - 기본적으로 엔티티의 모든 값이 노출됨 -> 비밀번호 등도 노출될 수 있음
-     *  - 응답 스펙을 맞추기 위한 로직이 추가됨 (@JsonIgnore 등)
-     *  - 엔티티가 변하면 API 스펙이 변함
-     *  - 컬렉션(어레이)을 직접 반환하면 향후 API 스펙을 변경하기 어려움 -> 카운트 등 다른 정보를 추가할 수 없음
-     *  결론:
-     *  - API 응답 스펙에 맞추어 별도의 DTO를 반환함
+     * 조회 V2: 응답 값으로 엔티티가 아닌 별도의 DTO를 반환
+     * 장점:
+     * - 엔티티가 변해도 API 스펙이 변경되지 않음
+     * - 추가로 Result 클래스로 컬렉션을 감싸서 향후 필요한 필드(카운트 등)을 추가할 수 있음
      */
-    @GetMapping("api/v1/members")
-    public List<Member> membersV1() {
-        return memberService.findMembers();
+
+    @GetMapping("/api/v2/members")
+    public Result memberV2() {
+        List<MemberDto> collect = memberService.findMembers().stream() // 엔티티 -> DTO 변환
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+        return new Result(collect.size(), collect);
     }
 
-    @PostMapping("api/v2/members")
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
+
+    @PostMapping("/api/v2/members")
     public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
         Member member = new Member();
         member.setName(request.getName());
@@ -42,7 +56,7 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
-    @PutMapping("api/v2/members/{id}")
+    @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
                                                @RequestBody @Valid UpdateMemberRequest request){
         memberService.update(id, request.getName()); // 업데이트 후 트랜젝션 끝남

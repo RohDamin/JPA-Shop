@@ -22,7 +22,6 @@ public class Member {
     @Embedded
     private Address address;
 
-    @JsonIgnore // 회원 조회 API v1
     @OneToMany(mappedBy = "member") // 연관관계의 주인X 거울O.
     private List<Order> orders = new ArrayList<>();
 }
