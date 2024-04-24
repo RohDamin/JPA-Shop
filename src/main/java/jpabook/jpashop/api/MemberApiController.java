@@ -25,7 +25,6 @@ public class MemberApiController {
      * - 엔티티가 변해도 API 스펙이 변경되지 않음
      * - 추가로 Result 클래스로 컬렉션을 감싸서 향후 필요한 필드(카운트 등)을 추가할 수 있음
      */
-
     @GetMapping("/api/v2/members")
     public Result memberV2() {
         List<MemberDto> collect = memberService.findMembers().stream() // 엔티티 -> DTO 변환
