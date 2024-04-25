@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jpabook.jpashop.domain.item.Item;
 import lombok.AccessLevel;
@@ -22,6 +23,8 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    // 양방향 연관관계가 있으면 한쪽은 JsonIgnore해야 함 -> 그렇지 않으면 무한루프 걸림
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
