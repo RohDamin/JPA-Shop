@@ -29,15 +29,13 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     /**
-     * V2. 엔티티를 조회해서 DTO로 변환(fetch join 사용X)
-     * 단점: 지연로딩으로 쿼리 N번 호출
-     * - 쿼리가 총 1+N+N번 실행됨
+     * V3. 엔티티를 조회해서 DTO로 변환(fetch join 사용O)
+     * - 엔티티를 페치 조인(fetch join)을 사용해서 쿼리 1번에 조회
      */
     private final OrderRepository orderRepository;
-    @GetMapping("/api/v2/simple-orders")
-    public Result ordersV2() {
-        //List<SimpleOrderDto> collect; //= orderRepository.findAllByString()
-        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+    @GetMapping("/api/v3/simple-orders")
+    public Result ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
         List<SimpleOrderDto> result = orders.stream()
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());

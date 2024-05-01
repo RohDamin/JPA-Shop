@@ -95,4 +95,19 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    /**
+     * 간단한 주문 조회 V3. 패치 조인 (fetch join)
+     * - 쿼리 1번으로 order -> member, order -> delivery를 조회
+     * - LAZY 무시하고 객체 값을 다 채워서 가져옴
+     * - 기본적으로 모두 LAZY로 설정하고 필요한 것만 패치 조인으로 DB에서 한번에 가져오면 대부분의 성능 문제가 해결됨
+     * - 그래도 해결되지 않는 것들은 주문 조회 V4(JPA에서 DTO로 바로 조회) 참고
+     * - 패치 조인은 실무에서 많이 사용 -> JPA 강의 통해서 100% 이해하기!
+     */
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
 }
