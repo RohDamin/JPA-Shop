@@ -5,6 +5,8 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,19 @@ public class OrderSimpleApiController {
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
         return new Result(result);
+    }
+
+    /**
+     * V4. JPA에서 DTO로 바로 조회
+     * - 일반적인 SQL을 사용할 때처럼 원하는 값을 선택해서 조회
+     * - new 명령어를 사용해서 JPQL의 결과를 DTO로 즉시 변환
+     * - API 스펙에 맞춘 코드가 리포지토리에 들어가게 된다는 단점
+     * - 그렇게 성능에 큰 영향을 주지 않음..
+     */
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository; // 의존관계 주입
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 
     @Data
